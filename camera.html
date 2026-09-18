@@ -14,7 +14,7 @@
 <body>
     <h1>📷 Take a Photo</h1>
 
-    <video id="video" autoplay playsinline></video>
+    <video id="video" autoplay playsinline style="transform: scaleX(-1);"></video>
     <canvas id="canvas" style="display:none;"></canvas>
     <button class="btn" id="captureBtn">Take Photo</button>
     <p id="statusText"></p>
@@ -85,7 +85,10 @@
             const scale = Math.min(1, MAX_WIDTH / video.videoWidth);
             canvas.width = video.videoWidth * scale;
             canvas.height = video.videoHeight * scale;
-            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const ctx = canvas.getContext("2d");
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
 
             statusText.textContent = "Uploading...";
