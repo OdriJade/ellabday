@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leave a Message</title>
+    <link rel="stylesheet" href="shared.css" />
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+
+<body>
+    <h1>💌 Leave a Message</h1>
+
+    <div class="message-form">
+        <input type="text" id="nameInput" placeholder="Your name" />
+        <textarea id="messageInput" placeholder="Write your birthday message..."></textarea>
+        <button class="btn" id="sendBtn">Send</button>
+        <p id="statusText"></p>
+    </div>
+
+    <div class="message-list" id="messageList"></div>
+
+    <a class="back-link" href="page2.html">&larr; Back</a>
+
+    <script>
+        const nameInput = document.getElementById("nameInput");
+        const messageInput = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const statusText = document.getElementById("statusText");
+        const messageList = document.getElementById("messageList");
+
+        // Live updates: shows new messages from anyone, instantly, newest first
+        db.collection("messages").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+            messageList.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const msg = doc.data();
+                const card = document.createElement("div");
+                card.className = "message-card";
+                card.innerHTML = `
+                    <div class="msg-name"></div>
+                    <div class="msg-text"></div>
+                    <div class="msg-time"></div>
+                    <button class="msg-delete">Delete</button>
+                `;
+                card.querySelector(".msg-name").textContent = msg.name;
+                card.querySelector(".msg-text").textContent = msg.text;
+                card.querySelector(".msg-time").textContent = msg.createdAt
+                    ? msg.createdAt.toDate().toLocaleString()
+                    : "Just now";
+                card.querySelector(".msg-delete").addEventListener("click", () => {
+                    if (!confirm("Delete this message? This can't be undone.")) return;
+                    db.collection("messages").doc(doc.id).delete().catch((err) => {
+                        console.error(err);
+                        alert("Couldn't delete message. Please try again.");
+                    });
+                });
+                messageList.appendChild(card);
+            });
+        }, (err) => {
+            console.error(err);
+            statusText.textContent = "Couldn't load messages. Check your Firebase config in firebase-config.js.";
+        });
+
+        sendBtn.addEventListener("click", () => {
+            const name = nameInput.value.trim();
+            const text = messageInput.value.trim();
+            if (!name || !text) {
+                alert("Please enter your name and a message.");
+                return;
+            }
+            sendBtn.disabled = true;
+            statusText.textContent = "Sending...";
+            db.collection("messages").add({
+                name,
+                text,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                nameInput.value = "";
+                messageInput.value = "";
+                statusText.textContent = "Sent!";
+                setTimeout(() => statusText.textContent = "", 2000);
+            }).catch((err) => {
+                console.error(err);
+                statusText.textContent = "Failed to send. Check your Firebase config/rules.";
+            }).finally(() => {
+                sendBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+
+</html>

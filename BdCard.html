@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday My love!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="Cardstyle.css" />
+</head>
+
+<body>
+    <div class="birthdayCard" id="birthdayCard">
+        <div class="cardFront">
+            <h3 class="happy">Happy Birthday!</h3>
+            <div class="balloons">
+                <div class="balloon-1"></div>
+                <div class="balloon-2"></div>
+                <div class="balloon-3"></div>
+                <div class="balloon-4"></div>
+            </div>
+        </div>
+
+        <div class="cardInside">
+            <h3 class="back">Happy Birthday</h3>
+            <p>My Dearest El,</p>
+            <p>Happy birthday, I hope this birthday you'll be able to enjoy all the things you love with the people you care about.
+                so i created this website for you, to make your birthday more special.
+                i love you so much :> 
+            </p>
+            <p class="name">Love Odi</p>
+        </div>
+    </div>
+
+    <button class="continue-button" id="continueButton">Continue</button>
+
+    <script>
+        const card = document.getElementById("birthdayCard");
+        const continueButton = document.getElementById("continueButton");
+
+        card.addEventListener("click", () => {
+            card.classList.toggle("open");
+            continueButton.classList.toggle("visible", card.classList.contains("open"));
+        });
+
+        continueButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            window.location.href = "page2.html";
+        });
+    </script>
+</body>
+
+</html>

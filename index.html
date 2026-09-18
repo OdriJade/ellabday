@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: pink;
+            background-image: url("https://i.pinimg.com/736x/ab/a7/99/aba7996525a545184a43766390fa06b3.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: "Lucida Handwriting", cursive, sans-serif;
+            color: #7a2e4a;
+            overflow: hidden;
+        }
+
+        /* ---------- Cake ---------- */
+        .cake {
+            position: relative;
+            width: 200px;
+            height: 170px;
+            margin-bottom: 30px;
+        }
+
+        /* Candle */
+        .candle {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 120px;
+            width: 14px;
+            height: 42px;
+            background: repeating-linear-gradient(45deg,
+                    #fff 0 6px, #ff8fb1 6px 12px);
+            border-radius: 3px;
+            z-index: 3;
+        }
+
+        /* Flame */
+        .flame {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 162px;
+            width: 16px;
+            height: 26px;
+            background: radial-gradient(circle at 50% 70%, #fff6b0 0%, #ffcf4d 45%, #ff8a3d 80%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow: 0 0 18px 6px rgba(255, 190, 90, 0.7);
+            transform-origin: bottom center;
+            animation: flicker 0.9s ease-in-out infinite alternate;
+            z-index: 4;
+        }
+
+        @keyframes flicker {
+            0% {
+                transform: translateX(-50%) scale(1) rotate(-3deg);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateX(-50%) scale(1.12) rotate(2deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-50%) scale(0.95) rotate(-1deg);
+                opacity: 0.95;
+            }
+        }
+
+        /* Cake tiers */
+        .tier {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
+        }
+
+        .tier-top {
+            bottom: 80px;
+            width: 120px;
+            height: 45px;
+            background: #ffd9e6;
+            box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .tier-bottom {
+            bottom: 25px;
+            width: 180px;
+            height: 58px;
+            background: #ffc2d8;
+            box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* Frosting drips */
+        .frosting {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 16px;
+            background: #fff0f6;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .frosting-top {
+            bottom: 112px;
+            width: 124px;
+        }
+
+        .frosting-bottom {
+            bottom: 74px;
+            width: 184px;
+        }
+
+        /* Plate */
+        .plate {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 12px;
+            width: 210px;
+            height: 14px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        .cake-wrap {
+            animation: bob 2.4s ease-in-out infinite;
+        }
+
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ---------- Loading text + bar ---------- */
+        .loading-text {
+            font-size: 1.4em;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .loading-text::after {
+            content: "";
+            animation: dots 1.4s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ""; }
+            25% { content: "."; }
+            50% { content: ".."; }
+            75% { content: "..."; }
+        }
+
+        .bar {
+            width: 240px;
+            max-width: 80vw;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff8fb1, #ff5d8f);
+            border-radius: 20px;
+            transition: width 0.25s linear;
+        }
+
+        /* ---------- Press button ---------- */
+        .press-button {
+            margin-top: 28px;
+            padding: 14px 42px;
+            font-family: inherit;
+            font-size: 1.2em;
+            color: #fff;
+            background: #ff5d8f;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.85);
+            transition: opacity 0.5s ease, transform 0.5s ease, background 0.3s ease;
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        .press-button.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .press-button:hover {
+            background: #e8467a;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 16px rgba(255, 93, 143, 0.4); }
+            50% { box-shadow: 0 4px 28px rgba(255, 93, 143, 0.9); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: -20px;
+            width: 10px;
+            height: 16px;
+            opacity: 0.9;
+            animation: fall linear forwards;
+            z-index: 0;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cake-wrap">
+        <div class="cake">
+            <div class="flame"></div>
+            <div class="candle"></div>
+            <div class="frosting frosting-top"></div>
+            <div class="tier tier-top"></div>
+            <div class="frosting frosting-bottom"></div>
+            <div class="tier tier-bottom"></div>
+            <div class="plate"></div>
+        </div>
+    </div>
+
+    <div id="loadingArea">
+        <div class="loading-text">Getting your surprise ready</div>
+        <div class="bar">
+            <div class="bar-fill" id="barFill"></div>
+        </div>
+    </div>
+
+    <button class="press-button" id="pressButton">Press</button>
+
+    <script>
+        const barFill = document.getElementById("barFill");
+        const loadingArea = document.getElementById("loadingArea");
+        const pressButton = document.getElementById("pressButton");
+
+        let progress = 0;
+        const timer = setInterval(() => {
+            progress += Math.random() * 12 + 4;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(timer);
+                setTimeout(showButton, 400);
+            }
+            barFill.style.width = progress + "%";
+        }, 220);
+
+        function showButton() {
+            loadingArea.classList.add("hidden");
+            pressButton.classList.add("visible");
+        }
+
+        // Confetti burst, then go to the card
+        pressButton.addEventListener("click", () => {
+            const colors = ["#ff5d8f", "#ffd9e6", "#ffc94c", "#7ad7f0", "#b28dff"];
+            for (let i = 0; i < 60; i++) {
+                const bit = document.createElement("div");
+                bit.className = "confetti";
+                bit.style.left = Math.random() * 100 + "vw";
+                bit.style.background = colors[Math.floor(Math.random() * colors.length)];
+                bit.style.animationDuration = (Math.random() * 1.2 + 1.2) + "s";
+                bit.style.animationDelay = (Math.random() * 0.3) + "s";
+                document.body.appendChild(bit);
+            }
+            pressButton.disabled = true;
+            setTimeout(() => {
+                window.location.href = "BdCard.html";
+            }, 1300);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photo Album</title>
+    <link rel="stylesheet" href="shared.css" />
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+
+<body>
+    <h1>📷 Take a Photo</h1>
+
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <button class="btn" id="captureBtn">Take Photo</button>
+    <p id="statusText"></p>
+
+    <h2>Album</h2>
+    <div class="album-grid" id="albumGrid"></div>
+
+    <a class="back-link" href="page2.html">&larr; Back</a>
+
+    <!-- Modal for viewing a photo large -->
+    <div class="modal-overlay" id="modalOverlay">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <img id="modalImg" src="" alt="photo" />
+        <div class="modal-caption">
+            <textarea id="captionInput" placeholder="Write a message on this photo..."></textarea>
+            <button class="btn" id="saveCaptionBtn" style="margin-top:10px;">Save Message</button>
+            <button class="btn btn-danger" id="deletePhotoBtn" style="margin-top:10px;">Delete Photo</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const captureBtn = document.getElementById("captureBtn");
+        const statusText = document.getElementById("statusText");
+        const albumGrid = document.getElementById("albumGrid");
+        const modalOverlay = document.getElementById("modalOverlay");
+        const modalImg = document.getElementById("modalImg");
+        const captionInput = document.getElementById("captionInput");
+        const saveCaptionBtn = document.getElementById("saveCaptionBtn");
+        const deletePhotoBtn = document.getElementById("deletePhotoBtn");
+        const closeModal = document.getElementById("closeModal");
+
+        let currentPhotoId = null;
+        const MAX_WIDTH = 800; // resize photos down so they fit comfortably in a Firestore document
+
+        // Start camera
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => { video.srcObject = stream; })
+                .catch((err) => {
+                    video.outerHTML = "<p>Couldn't access camera. Make sure this page is opened via localhost/HTTPS and that you allowed camera permission.</p>";
+                    console.error(err);
+                });
+        } else {
+            video.outerHTML = "<p>Camera not available. This page must be opened via localhost or HTTPS, not by double-clicking the file.</p>";
+        }
+
+        // Live updates: renders automatically whenever ANY visitor adds/edits a photo
+        db.collection("photos").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
+            albumGrid.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const photo = doc.data();
+                const item = document.createElement("div");
+                item.className = "album-item";
+                const img = document.createElement("img");
+                img.src = photo.src;
+                item.appendChild(img);
+                item.addEventListener("click", () => openModal(doc.id, photo));
+                albumGrid.appendChild(item);
+            });
+        }, (err) => {
+            console.error(err);
+            statusText.textContent = "Couldn't load album. Check your Firebase config in firebase-config.js.";
+        });
+
+        captureBtn.addEventListener("click", () => {
+            const scale = Math.min(1, MAX_WIDTH / video.videoWidth);
+            canvas.width = video.videoWidth * scale;
+            canvas.height = video.videoHeight * scale;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+
+            statusText.textContent = "Uploading...";
+            db.collection("photos").add({
+                src: dataUrl,
+                caption: "",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                statusText.textContent = "Photo added!";
+                setTimeout(() => statusText.textContent = "", 2000);
+            }).catch((err) => {
+                console.error(err);
+                statusText.textContent = "Upload failed. Check your Firebase config/rules.";
+            });
+        });
+
+        function openModal(id, photo) {
+            currentPhotoId = id;
+            modalImg.src = photo.src;
+            captionInput.value = photo.caption || "";
+            modalOverlay.classList.add("visible");
+        }
+
+        saveCaptionBtn.addEventListener("click", () => {
+            db.collection("photos").doc(currentPhotoId).update({
+                caption: captionInput.value
+            }).then(() => {
+                modalOverlay.classList.remove("visible");
+            }).catch((err) => {
+                console.error(err);
+                alert("Couldn't save message. Please try again.");
+            });
+        });
+
+        closeModal.addEventListener("click", () => {
+            modalOverlay.classList.remove("visible");
+        });
+
+        deletePhotoBtn.addEventListener("click", () => {
+            if (!confirm("Delete this photo? This can't be undone.")) return;
+            db.collection("photos").doc(currentPhotoId).delete()
+                .then(() => {
+                    modalOverlay.classList.remove("visible");
+                })
+                .catch((err) => {
+                    console.error(err);
+                    alert("Couldn't delete photo. Please try again.");
+                });
+        });
+    </script>
+</body>
+
+</html>

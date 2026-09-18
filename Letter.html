@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Letter For You</title>
+    <link rel="stylesheet" href="shared.css" />
+</head>
+
+<body>
+    <h1>✉️ A Letter For You</h1>
+    <p>This letter can only be opened with the password.</p>
+
+    <div class="password-form" id="passwordForm">
+        <input type="password" id="passwordInput" placeholder="Enter password" />
+        <button class="btn" id="unlockBtn">Unlock</button>
+    </div>
+    <div class="error-text" id="errorText">Incorrect password. Try again.</div>
+
+    <div class="letter-box" id="letterBox" style="display:none;"></div>
+
+    <a class="back-link" href="page2.html">&larr; Back</a>
+
+    <script>
+        // EDIT THESE TWO VALUES:
+        const PASSWORD = "odella";
+        const LETTER_TEXT = `My Dearest El,
+
+There are many things I want to say to you. You are the most amazing person I have ever met, 
+and I am so grateful to have you in my life. I hope you know how important you are to me, 
+if you don't feel that i don't ngano mo think man ka ana, na you matter to me like a loooot. I know my gift is simple, but it comes from the bottom of my heart,
+I will bawi once I can earn more money :>, so I hope you appreciate the small things lovie. things will change for us soon <3
+I want you to know that I am glad you are here baby, your presence has given me so much, you gave me everything and im thankful for it. 
+I genuinely love you to the moon and back my el.
+
+
+Love,
+Audrey`;
+
+        const passwordInput = document.getElementById("passwordInput");
+        const unlockBtn = document.getElementById("unlockBtn");
+        const errorText = document.getElementById("errorText");
+        const letterBox = document.getElementById("letterBox");
+        const passwordForm = document.getElementById("passwordForm");
+
+        unlockBtn.addEventListener("click", checkPassword);
+        passwordInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") checkPassword();
+        });
+
+        function checkPassword() {
+            if (passwordInput.value === PASSWORD) {
+                letterBox.textContent = LETTER_TEXT;
+                letterBox.style.display = "block";
+                passwordForm.style.display = "none";
+                errorText.style.display = "none";
+            } else {
+                errorText.style.display = "block";
+            }
+        }
+    </script>
+</body>
+
+</html>
