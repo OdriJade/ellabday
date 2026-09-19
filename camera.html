@@ -34,6 +34,10 @@
         <span class="close-modal" id="closeModal">&times;</span>
         <img id="modalImg" src="" alt="photo" />
         <div class="modal-caption">
+            <div class="caption-bubble" id="captionBubble">
+                <p id="captionDisplay" class="caption-text"></p>
+                <p id="captionEmpty" class="caption-empty">No message yet — add one below.</p>
+            </div>
             <textarea id="captionInput" placeholder="Write a message on this photo..."></textarea>
             <button class="btn" id="saveCaptionBtn" style="margin-top:10px;">Save Message</button>
             <button class="btn btn-danger" id="deletePhotoBtn" style="margin-top:10px;">Delete Photo</button>
@@ -52,6 +56,8 @@
         const modalOverlay = document.getElementById("modalOverlay");
         const modalImg = document.getElementById("modalImg");
         const captionInput = document.getElementById("captionInput");
+        const captionDisplay = document.getElementById("captionDisplay");
+        const captionEmpty = document.getElementById("captionEmpty");
         const saveCaptionBtn = document.getElementById("saveCaptionBtn");
         const deletePhotoBtn = document.getElementById("deletePhotoBtn");
         const closeModal = document.getElementById("closeModal");
@@ -167,14 +173,26 @@
             currentPhotoId = id;
             modalImg.src = photo.src;
             captionInput.value = photo.caption || "";
+            updateCaptionBubble(photo.caption || "");
             modalOverlay.classList.add("visible");
+        }
+
+        function updateCaptionBubble(caption) {
+            if (caption && caption.trim()) {
+                captionDisplay.textContent = caption;
+                captionDisplay.style.display = "block";
+                captionEmpty.style.display = "none";
+            } else {
+                captionDisplay.style.display = "none";
+                captionEmpty.style.display = "block";
+            }
         }
 
         saveCaptionBtn.addEventListener("click", () => {
             db.collection("photos").doc(currentPhotoId).update({
                 caption: captionInput.value
             }).then(() => {
-                modalOverlay.classList.remove("visible");
+                updateCaptionBubble(captionInput.value);
             }).catch((err) => {
                 console.error(err);
                 alert("Couldn't save message. Please try again.");
