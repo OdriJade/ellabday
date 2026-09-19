@@ -25,7 +25,7 @@ h1, h2 {
 
 .btn {
     display: inline-block;
-    background-color: #1e8bb4;
+    background-color: #ff5d8f;
     color: white;
     border: none;
     text-decoration: none;
@@ -39,7 +39,7 @@ h1, h2 {
 }
 
 .btn:hover {
-    background-color: #0f6e94;
+    background-color: #e8467a;
 }
 
 .hub-buttons {
