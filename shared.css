@@ -87,7 +87,7 @@ h1, h2 {
 
 .back-link {
     margin-top: 30px;
-    color: #1e8bb4;
+    color: #ff5d8f;
     text-decoration: none;
 }
 
@@ -152,7 +152,7 @@ h1, h2 {
 }
 
 .album-item-caption .see-more {
-    color: #1e8bb4;
+    color: #ff5d8f;
     font-weight: bold;
 }
 
@@ -262,7 +262,7 @@ h1, h2 {
 
 .message-card .msg-name {
     font-weight: bold;
-    color: #1e8bb4;
+    color: #ff5d8f;
 }
 
 .message-card .msg-time {
