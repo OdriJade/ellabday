@@ -119,18 +119,41 @@ h1, h2 {
 
 .album-item {
     width: 140px;
-    height: 140px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    position: relative;
+    background: white;
+    display: flex;
+    flex-direction: column;
 }
 
-.album-item img {
+.album-item-img {
+    width: 140px;
+    height: 140px;
+    overflow: hidden;
+}
+
+.album-item-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+}
+
+.album-item-caption {
+    min-height: 34px;
+    padding: 8px 10px;
+    font-size: 0.8em;
+    color: #333;
+    background: white;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.album-item-caption .see-more {
+    color: #1e8bb4;
+    font-weight: bold;
 }
 
 .modal-overlay {
