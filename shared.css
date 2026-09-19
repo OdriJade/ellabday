@@ -3,7 +3,7 @@
 }
 
 body {
-    font-family: "Lucida Handwriting", cursive, sans-serif;
+    font-family: georgia, "Times New Roman", Times, serif;
     background-color: pink;
     background-image: url("https://i.pinimg.com/736x/ab/a7/99/aba7996525a545184a43766390fa06b3.jpg");
     background-size: cover;
@@ -81,7 +81,7 @@ h1, h2 {
 
 .icon-btn span {
     margin-top: 8px;
-    font-family: "Lucida Handwriting", cursive;
+    font-family: georgia, "Times New Roman", Times, serif;
     font-size: 1.3em;
 }
 
