@@ -19,6 +19,8 @@
     <div>
         <button class="btn" id="captureBtn">Take Photo</button>
         <button class="btn" id="switchCameraBtn">🔄 Switch Camera</button>
+        <button class="btn" id="uploadBtn">🖼️ Upload Photo</button>
+        <input type="file" id="uploadInput" accept="image/*" style="display:none;" />
     </div>
     <p id="statusText"></p>
 
@@ -43,6 +45,8 @@
         const canvas = document.getElementById("canvas");
         const captureBtn = document.getElementById("captureBtn");
         const switchCameraBtn = document.getElementById("switchCameraBtn");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const uploadInput = document.getElementById("uploadInput");
         const statusText = document.getElementById("statusText");
         const albumGrid = document.getElementById("albumGrid");
         const modalOverlay = document.getElementById("modalOverlay");
@@ -105,18 +109,7 @@
             statusText.textContent = "Couldn't load album. Check your Firebase config in firebase-config.js.";
         });
 
-        captureBtn.addEventListener("click", () => {
-            const scale = Math.min(1, MAX_WIDTH / video.videoWidth);
-            canvas.width = video.videoWidth * scale;
-            canvas.height = video.videoHeight * scale;
-            const ctx = canvas.getContext("2d");
-            if (facingMode === "user") {
-                ctx.translate(canvas.width, 0);
-                ctx.scale(-1, 1);
-            }
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
-
+        function savePhoto(dataUrl) {
             statusText.textContent = "Uploading...";
             db.collection("photos").add({
                 src: dataUrl,
@@ -129,6 +122,45 @@
                 console.error(err);
                 statusText.textContent = "Upload failed. Check your Firebase config/rules.";
             });
+        }
+
+        captureBtn.addEventListener("click", () => {
+            const scale = Math.min(1, MAX_WIDTH / video.videoWidth);
+            canvas.width = video.videoWidth * scale;
+            canvas.height = video.videoHeight * scale;
+            const ctx = canvas.getContext("2d");
+            if (facingMode === "user") {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            savePhoto(canvas.toDataURL("image/jpeg", 0.6));
+        });
+
+        uploadBtn.addEventListener("click", () => {
+            uploadInput.click();
+        });
+
+        uploadInput.addEventListener("change", () => {
+            const file = uploadInput.files[0];
+            if (!file) return;
+
+            const img = new Image();
+            const objectUrl = URL.createObjectURL(file);
+            img.onload = () => {
+                const scale = Math.min(1, MAX_WIDTH / img.width);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                savePhoto(canvas.toDataURL("image/jpeg", 0.6));
+                URL.revokeObjectURL(objectUrl);
+                uploadInput.value = ""; // reset so the same file can be picked again later
+            };
+            img.onerror = () => {
+                statusText.textContent = "Couldn't read that image file.";
+                URL.revokeObjectURL(objectUrl);
+            };
+            img.src = objectUrl;
         });
 
         function openModal(id, photo) {
